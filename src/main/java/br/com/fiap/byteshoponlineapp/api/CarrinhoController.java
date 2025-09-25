@@ -1,0 +1,55 @@
+package br.com.fiap.byteshoponlineapp.api;
+
+import br.com.fiap.byteshoponlineapp.domain.Carrinho;
+import br.com.fiap.byteshoponlineapp.api.dto.CarrinhoCreateRequest;
+import br.com.fiap.byteshoponlineapp.domain.Cliente;
+import br.com.fiap.byteshoponlineapp.domain.ClienteRepository;
+import br.com.fiap.byteshoponlineapp.domain.dto.CarrinhoResponse;
+import br.com.fiap.byteshoponlineapp.service.CarrinhoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/carrinhos")
+public class CarrinhoController {
+    @Autowired
+    private CarrinhoService carrinhoService;
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @GetMapping("/{id}")
+        public ResponseEntity<CarrinhoResponse> buscarPorId(@PathVariable Long id) {
+            return carrinhoService.buscarPorId(id)
+                    .map(carrinho -> ResponseEntity.ok(toResponse(carrinho)))
+                    .orElse(ResponseEntity.notFound().build());
+        }
+
+        private CarrinhoResponse toResponse(Carrinho carrinho) {
+            CarrinhoResponse dto = new CarrinhoResponse();
+            dto.setId(carrinho.getId());
+            dto.setClienteId(carrinho.getCliente() != null ? carrinho.getCliente().getId() : null);
+            dto.setTotal(carrinho.getTotal());
+            // TODO: mapear itens para ItemCarrinhoResponse se necessário
+            return dto;
+    }
+
+    @PostMapping
+        public ResponseEntity<CarrinhoResponse> criar(@RequestBody CarrinhoCreateRequest request) {
+            Cliente cliente = clienteRepository.findById(request.getClienteId())
+                .orElseThrow(() -> new ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+            try {
+                Carrinho salvo = carrinhoService.criarCarrinho(cliente);
+                return ResponseEntity.status(201).body(toResponse(salvo));
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT, e.getMessage());
+            }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        carrinhoService.excluirCarrinho(id);
+        return ResponseEntity.noContent().build();
+    }
+}

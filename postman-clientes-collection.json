@@ -1,0 +1,139 @@
+{
+  "info": {
+    "name": "ByteShop - Clientes",
+    "description": "Coleção de testes dos endpoints de clientes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar todos os clientes",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clientes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes"]
+        }
+      }
+    },
+    {
+      "name": "Buscar cliente Ana Silva (id=1)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clientes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes", "1"]
+        }
+      }
+    },
+    {
+      "name": "Buscar cliente Carlos Souza (id=2)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clientes/2",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes", "2"]
+        }
+      }
+    },
+    {
+      "name": "Criar novo cliente",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Novo Cliente\",\n  \"email\": \"novo@email.com\",\n  \"documento\": \"111.222.333-44\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/clientes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes"]
+        }
+      }
+    },
+    {
+      "name": "Atualizar cliente Ana Silva (id=1)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Ana Atualizada\",\n  \"email\": \"ana.atualizada@email.com\",\n  \"documento\": \"123.456.789-00\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/clientes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes", "1"]
+        }
+      }
+    },
+    {
+      "name": "Excluir cliente Carlos Souza (id=2)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clientes/2",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes", "2"]
+        }
+      }
+    },
+    {
+      "name": "Buscar cliente inexistente (id=999)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clientes/999",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes", "999"]
+        }
+      }
+    },
+    {
+      "name": "Criar cliente com e-mail duplicado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Outro Ana\",\n  \"email\": \"ana.silva@email.com\",\n  \"documento\": \"000.000.000-00\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/clientes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["clientes"]
+        }
+      }
+    }
+  ]
+}
