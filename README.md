@@ -1,19 +1,3 @@
-src/
-  main/
-    java/
-      br/com/fiap/byteshoponlineapp/
-        api/         # Controllers REST
-        domain/      # Entidades, DTOs, Value Objects, Repositórios
-        service/     # Regras de negócio
-        infrastructure/ # Configurações
-    resources/
-      application.properties
-      static/
-      templates/
-  test/
-    java/
-      br/com/fiap/byteshoponlineapp/ # Testes automatizados
-
 # ByteShopOnlineApp
 
 ![Java](https://img.shields.io/badge/Java-17%2B-blue?style=flat-square) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green?style=flat-square) ![H2 Database](https://img.shields.io/badge/H2-Database-lightgrey?style=flat-square)
@@ -82,6 +66,7 @@ src/
 4. **Acesse:**
    - API: `http://localhost:8080/`
    - H2 Console: `http://localhost:8080/h2-console`
+   - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
 ---
 
