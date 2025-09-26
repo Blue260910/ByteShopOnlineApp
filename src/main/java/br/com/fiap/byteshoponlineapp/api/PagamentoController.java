@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/pagamentos")
 public class PagamentoController {
     @Autowired
+    private br.com.fiap.byteshoponlineapp.domain.PagamentoRepository pagamentoRepository;
+    @Autowired
     private PagamentoService pagamentoService;
     @Autowired
     private PedidoRepository pedidoRepository;
@@ -30,18 +32,39 @@ public class PagamentoController {
     public ResponseEntity<PagamentoResponse> criar(@RequestBody PagamentoRequest pagamentoRequest) {
         Pedido pedido = pedidoRepository.findById(pagamentoRequest.getPedidoId())
             .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+        // Verifica se já existe pagamento para o pedido
+        if (pagamentoRepository.findByPedidoId(pedido.getId()).isPresent()) {
+            throw new IllegalArgumentException("Já existe pagamento para este pedido");
+        }
+        // Valida método
+        String metodo = pagamentoRequest.getMetodo();
+        if (!("PIX".equals(metodo) || "CARTAO".equals(metodo) || "BOLETO".equals(metodo))) {
+            throw new IllegalArgumentException("Método de pagamento inválido. Permitidos: PIX, CARTAO, BOLETO");
+        }
         Pagamento pagamento = new Pagamento();
         pagamento.setPedido(pedido);
         pagamento.setValor(pagamentoRequest.getValor());
-        pagamento.setMetodo(pagamentoRequest.getMetodo());
+        pagamento.setMetodo(metodo);
         Pagamento salvo = pagamentoService.criarPagamento(pagamento);
         return ResponseEntity.status(201).body(toResponse(salvo));
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<PagamentoResponse> atualizarStatus(@PathVariable Long id, @RequestBody String status) {
-        Pagamento atualizado = pagamentoService.atualizarStatus(id, status);
+    public ResponseEntity<PagamentoResponse> atualizarStatus(@PathVariable Long id, @RequestBody StatusUpdate statusUpdate) {
+        Pagamento atualizado = pagamentoService.atualizarStatus(id, statusUpdate.getStatus());
         return ResponseEntity.ok(toResponse(atualizado));
+    }
+
+    public static class StatusUpdate {
+        private String status;
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 
     private PagamentoResponse toResponse(Pagamento pagamento) {

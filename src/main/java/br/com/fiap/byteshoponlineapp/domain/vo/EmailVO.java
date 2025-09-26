@@ -4,10 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 
-/**
- * @Embeddable diz ao JPA que este tipo NÃO vira uma tabela,
- * mas sim colunas DENTRO da tabela da entidade que o "embedda".
- */
+
 
 @Embeddable
 public class EmailVO {
@@ -28,6 +25,4 @@ public class EmailVO {
     public String getValue() {
         return value;
     }
-
-    /** VOs costumam ser imutáveis; sem setters públicos. */
 }

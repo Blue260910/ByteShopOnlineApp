@@ -34,6 +34,9 @@ public class PagamentoService {
     public Pagamento atualizarStatus(Long id, String status) {
         Pagamento pagamento = pagamentoRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Pagamento não encontrado"));
+        if (!("PENDENTE".equals(status) || "APROVADO".equals(status) || "RECUSADO".equals(status))) {
+            throw new IllegalArgumentException("Status de pagamento inválido. Permitidos: PENDENTE, APROVADO, RECUSADO");
+        }
         pagamento.setStatus(status);
         return pagamentoRepository.save(pagamento);
     }

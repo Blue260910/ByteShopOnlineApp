@@ -22,12 +22,17 @@ public class PedidoController {
     public ResponseEntity<List<br.com.fiap.byteshoponlineapp.domain.dto.PedidoResponse>> listarPorCliente(@RequestParam(required = false) Long clienteId,
                                                         @RequestParam(required = false) String status) {
         List<Pedido> pedidos;
-        if (clienteId != null) {
+        if (clienteId != null && status != null) {
+            // Filtrar por cliente e status
+            pedidos = pedidoService.listarPorCliente(clienteId).stream()
+                .filter(p -> status.equals(p.getStatus()))
+                .toList();
+        } else if (clienteId != null) {
             pedidos = pedidoService.listarPorCliente(clienteId);
         } else if (status != null) {
             pedidos = pedidoService.listarPorStatus(status);
         } else {
-            pedidos = pedidoService.listarPorStatus("CRIADO");
+            pedidos = pedidoService.listarTodos();
         }
         List<br.com.fiap.byteshoponlineapp.domain.dto.PedidoResponse> resposta = pedidos.stream().map(this::toResponse).toList();
         return ResponseEntity.ok(resposta);
@@ -58,6 +63,9 @@ public class PedidoController {
         return ResponseEntity.ok(toResponse(atualizado));
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private br.com.fiap.byteshoponlineapp.domain.PagamentoRepository pagamentoRepository;
+
     private br.com.fiap.byteshoponlineapp.domain.dto.PedidoResponse toResponse(Pedido pedido) {
         br.com.fiap.byteshoponlineapp.domain.dto.PedidoResponse dto = new br.com.fiap.byteshoponlineapp.domain.dto.PedidoResponse();
         dto.setId(pedido.getId());
@@ -78,7 +86,17 @@ public class PedidoController {
             }).toList();
             dto.setItens(itensDto);
         }
-        // dto.setPagamento(...)
+        // Buscar pagamento relacionado ao pedido
+        br.com.fiap.byteshoponlineapp.domain.Pagamento pagamento = pagamentoRepository.findByPedidoId(pedido.getId()).orElse(null);
+        if (pagamento != null) {
+            br.com.fiap.byteshoponlineapp.domain.dto.PagamentoResponse pagamentoDto = new br.com.fiap.byteshoponlineapp.domain.dto.PagamentoResponse();
+            pagamentoDto.setId(pagamento.getId());
+            pagamentoDto.setPedidoId(pagamento.getPedido() != null ? pagamento.getPedido().getId() : null);
+            pagamentoDto.setValor(pagamento.getValor());
+            pagamentoDto.setMetodo(pagamento.getMetodo());
+            pagamentoDto.setStatus(pagamento.getStatus());
+            dto.setPagamento(pagamentoDto);
+        }
         return dto;
     }
 }

@@ -30,8 +30,26 @@ public class CarrinhoController {
             CarrinhoResponse dto = new CarrinhoResponse();
             dto.setId(carrinho.getId());
             dto.setClienteId(carrinho.getCliente() != null ? carrinho.getCliente().getId() : null);
-            dto.setTotal(carrinho.getTotal());
-            // TODO: mapear itens para ItemCarrinhoResponse se necessário
+            // Mapear itens para ItemCarrinhoResponse
+            if (carrinho.getItens() != null && !carrinho.getItens().isEmpty()) {
+                java.util.List<br.com.fiap.byteshoponlineapp.domain.dto.ItemCarrinhoResponse> itensDto = carrinho.getItens().stream().map(item -> {
+                    br.com.fiap.byteshoponlineapp.domain.dto.ItemCarrinhoResponse dtoItem = new br.com.fiap.byteshoponlineapp.domain.dto.ItemCarrinhoResponse();
+                    dtoItem.setId(item.getId());
+                    dtoItem.setProdutoId(item.getProduto() != null ? item.getProduto().getId() : null);
+                    dtoItem.setNomeProduto(item.getProduto() != null ? item.getProduto().getNome() : null);
+                    dtoItem.setQuantidade(item.getQuantidade());
+                    dtoItem.setPrecoUnitario(item.getPrecoUnitario());
+                    dtoItem.setSubtotal(item.getSubtotal());
+                    return dtoItem;
+                }).toList();
+                dto.setItens(itensDto);
+                // Calcular total
+                double total = itensDto.stream().mapToDouble(i -> i.getSubtotal() != null ? i.getSubtotal() : 0.0).sum();
+                dto.setTotal(total);
+            } else {
+                dto.setItens(java.util.Collections.emptyList());
+                dto.setTotal(0.0);
+            }
             return dto;
     }
 

@@ -4,10 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 
-/**
- * Documento (CPF/CNPJ) como VO simples.
- * Poderia ter validação de formato; aqui mantemos didático.
- */
+
 @Embeddable
 public class DocumentoVO {
 

@@ -10,6 +10,9 @@ import java.util.Optional;
 
 @Service
 public class PedidoService {
+    public List<Pedido> listarTodos() {
+        return pedidoRepository.findAll();
+    }
     public void cancelarPedido(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
@@ -67,6 +70,9 @@ public class PedidoService {
     public Pedido atualizarStatus(Long id, String status) {
         Pedido pedido = pedidoRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+        if (!("CRIADO".equals(status) || "APROVADO".equals(status) || "CANCELADO".equals(status))) {
+            throw new IllegalArgumentException("Status de pedido inválido. Permitidos: CRIADO, APROVADO, CANCELADO");
+        }
         pedido.setStatus(status);
         return pedidoRepository.save(pedido);
     }
